@@ -11,8 +11,7 @@ class LocalCacheService {
 
   Future<String> getSourceUrl() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(sourceUrlKey) ??
-        'https://raw.githubusercontent.com/LeoLira1/camda-estoque/refs/heads/main/inventario_ciclico_tab.py';
+    return prefs.getString(sourceUrlKey) ?? '';
   }
 
   Future<void> saveSourceUrl(String value) async {

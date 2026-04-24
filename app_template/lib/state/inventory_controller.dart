@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/inventory_item.dart';
 import '../services/inventory_api_service.dart';
@@ -58,6 +61,12 @@ class InventoryController extends ChangeNotifier {
   }
 
   Future<void> sync() async {
+    if (_sourceUrl.trim().isEmpty) {
+      _error = 'Configure a URL de origem nas configurações (ícone de engrenagem).';
+      notifyListeners();
+      return;
+    }
+
     _loading = true;
     _error = null;
     notifyListeners();
@@ -68,7 +77,13 @@ class InventoryController extends ChangeNotifier {
       _lastSync = DateTime.now();
       await _cacheService.saveInventory(data, _lastSync!);
     } catch (e) {
-      _error = e.toString();
+      if (e is SocketException ||
+          (e is http.ClientException && e.message.contains('SocketException')) ||
+          e.toString().contains('Failed host lookup')) {
+        _error = 'Sem conexão com a internet. Verifique sua conexão e tente novamente.';
+      } else {
+        _error = e.toString();
+      }
     } finally {
       _loading = false;
       notifyListeners();
