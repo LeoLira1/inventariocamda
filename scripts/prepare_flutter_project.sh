@@ -18,9 +18,11 @@ if [ -f "$PROJECT_DIR/test/widget_test.dart" ]; then
   echo "Erro: test/widget_test.dart não deveria existir após sincronizar template."
   exit 1
 fi
-if rg -n "package:build_app/main.dart" "$PROJECT_DIR/test"; then
-  echo "Erro: import legado package:build_app/main.dart encontrado."
-  exit 1
+if compgen -G "$PROJECT_DIR/test/*.dart" > /dev/null; then
+  if grep -n "package:build_app/main.dart" "$PROJECT_DIR"/test/*.dart; then
+    echo "Erro: import legado package:build_app/main.dart encontrado."
+    exit 1
+  fi
 fi
 
 cd "$PROJECT_DIR"
