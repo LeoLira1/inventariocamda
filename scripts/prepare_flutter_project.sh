@@ -5,10 +5,7 @@ PROJECT_DIR="build_app"
 rm -rf "$PROJECT_DIR"
 
 # Preferimos --empty para evitar arquivos de exemplo que quebram os testes do template.
-if ! flutter create --platforms=android --empty "$PROJECT_DIR"; then
-  echo "flutter create --empty não suportado nesta versão; usando template padrão."
-  flutter create --platforms=android "$PROJECT_DIR"
-fi
+flutter create --platforms=android --empty "$PROJECT_DIR"
 
 # Defesa extra: remove arquivos de exemplo caso existam (template padrão do Flutter).
 rm -f "$PROJECT_DIR/test/widget_test.dart" "$PROJECT_DIR/lib/main.dart"
