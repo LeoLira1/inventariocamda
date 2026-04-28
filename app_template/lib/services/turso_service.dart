@@ -96,7 +96,29 @@ class TursoService {
     return rows.map(_mapToProduto).toList();
   }
 
+  Future<void> ensureInventarioCicliExists() async {
+    await _execute(
+      'CREATE TABLE IF NOT EXISTS inventario_cicli ('
+      '  id INTEGER PRIMARY KEY AUTOINCREMENT,'
+      '  data_contagem TEXT NOT NULL,'
+      '  produto_id TEXT NOT NULL,'
+      '  produto_nome TEXT NOT NULL DEFAULT \'\','
+      '  categoria_id TEXT NOT NULL DEFAULT \'\','
+      '  categoria_label TEXT NOT NULL DEFAULT \'\','
+      '  categoria_cor TEXT NOT NULL DEFAULT \'#888888\','
+      '  qtd_sistema REAL NOT NULL DEFAULT 0,'
+      '  qtd_contada REAL,'
+      '  divergencia REAL,'
+      '  score REAL NOT NULL DEFAULT 0,'
+      '  contado_em TEXT DEFAULT \'\','
+      '  observacao TEXT DEFAULT \'\''
+      ')',
+      [],
+    );
+  }
+
   Future<List<ItemCiclo>> fetchCiclo(String dataContagem) async {
+    await ensureInventarioCicliExists();
     final rows = await _query(
       'SELECT * FROM inventario_cicli WHERE data_contagem = ?',
       [_text(dataContagem)],
