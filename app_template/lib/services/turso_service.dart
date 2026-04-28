@@ -184,6 +184,10 @@ class TursoService {
       );
     }
 
+    // Usa os mesmos valores que o dashboard Streamlit espera:
+    // 'ok' = sem divergência, 'divergencia' = houve diferença
+    final statusCiclo = divergencia == 0 ? 'ok' : 'divergencia';
+
     // Keep estoque_mestre in sync
     await _execute(
       'UPDATE estoque_mestre SET '
@@ -191,7 +195,7 @@ class TursoService {
       'qtd_sistema_na_contagem = qtd_sistema, contado_ciclo_em = ? '
       'WHERE codigo = ?',
       [
-        _text('contado'),
+        _text(statusCiclo),
         _int(qtdContada.round()),
         _text(contadoEm),
         _text(produtoId),
