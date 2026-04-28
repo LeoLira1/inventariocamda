@@ -1,53 +1,26 @@
-import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/inventory_item.dart';
-
 class LocalCacheService {
-  static const sourceUrlKey = 'inventory_source_url';
-  static const inventoryDataKey = 'inventory_data';
-  static const syncDateKey = 'inventory_last_sync';
+  static const _dbUrlKey = 'turso_db_url';
+  static const _tokenKey = 'turso_auth_token';
 
-  Future<String> getSourceUrl() async {
+  Future<String> getDbUrl() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(sourceUrlKey) ?? '';
+    return prefs.getString(_dbUrlKey) ?? '';
   }
 
-  Future<void> saveSourceUrl(String value) async {
+  Future<void> saveDbUrl(String value) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(sourceUrlKey, value);
+    await prefs.setString(_dbUrlKey, value);
   }
 
-  Future<void> saveInventory(List<InventoryItem> items, DateTime syncDate) async {
+  Future<String> getAuthToken() async {
     final prefs = await SharedPreferences.getInstance();
-    final payload = items.map((item) => item.toMap()).toList();
-    await prefs.setString(inventoryDataKey, jsonEncode(payload));
-    await prefs.setString(syncDateKey, syncDate.toIso8601String());
+    return prefs.getString(_tokenKey) ?? '';
   }
 
-  Future<List<InventoryItem>> readInventory() async {
+  Future<void> saveAuthToken(String value) async {
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(inventoryDataKey);
-    if (raw == null || raw.trim().isEmpty) {
-      return const [];
-    }
-
-    final dynamic decoded = jsonDecode(raw);
-    if (decoded is! List) {
-      return const [];
-    }
-
-    return decoded
-        .whereType<Map>()
-        .map((item) => InventoryItem.fromMap(item.cast<String, dynamic>()))
-        .toList();
-  }
-
-  Future<DateTime?> readLastSyncDate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(syncDateKey);
-    if (raw == null) return null;
-    return DateTime.tryParse(raw);
+    await prefs.setString(_tokenKey, value);
   }
 }
