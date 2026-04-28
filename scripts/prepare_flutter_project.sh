@@ -17,6 +17,12 @@ if [ -f "$PROJECT_DIR/test/widget_test.dart" ]; then
   exit 1
 fi
 
+# Garante permissões de rede no AndroidManifest (necessárias para o Turso HTTP).
+MANIFEST="$PROJECT_DIR/android/app/src/main/AndroidManifest.xml"
+if ! grep -q 'android.permission.INTERNET' "$MANIFEST"; then
+  sed -i 's|<application|<uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>\n    <application|' "$MANIFEST"
+fi
+
 cd "$PROJECT_DIR"
 flutter pub get
 flutter test

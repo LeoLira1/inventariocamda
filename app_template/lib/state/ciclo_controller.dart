@@ -204,12 +204,19 @@ class CicloController extends ChangeNotifier {
   // ── helpers ────────────────────────────────────────────────────────────────
 
   String _friendlyError(Object e) {
-    if (e is SocketException ||
-        (e is http.ClientException &&
-            e.message.contains('SocketException')) ||
-        e.toString().contains('Failed host lookup')) {
-      return 'Sem conexão com a internet.';
+    final msg = e.toString();
+    if (e is SocketException) {
+      return 'Erro de rede: ${e.message}\n'
+          'Verifique a URL do banco e a conexão com a internet.';
     }
-    return e.toString();
+    if (e is http.ClientException) {
+      return 'Erro HTTP: ${e.message}';
+    }
+    if (msg.contains('Failed host lookup')) {
+      return 'DNS não resolveu o servidor Turso.\n'
+          'Verifique a URL do banco nas configurações.\n'
+          'Detalhe: $msg';
+    }
+    return msg;
   }
 }
