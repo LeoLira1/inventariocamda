@@ -197,7 +197,6 @@ class CicloController extends ChangeNotifier {
 
   void updateDataContagem(String value) {
     _dataContagem = value;
-    _ciclo.clear();
     notifyListeners();
   }
 
