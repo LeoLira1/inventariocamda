@@ -119,9 +119,16 @@ class TursoService {
 
   Future<List<ItemCiclo>> fetchCiclo(String dataContagem) async {
     await ensureInventarioCicliExists();
+    // Retorna a contagem mais recente por produto, independente da data.
+    // Assim divergências anotadas em dias anteriores continuam visíveis
+    // até serem recontadas no ciclo atual.
     final rows = await _query(
-      'SELECT * FROM inventario_cicli WHERE data_contagem = ?',
-      [_text(dataContagem)],
+      'SELECT i.* FROM inventario_cicli i '
+      'INNER JOIN ('
+      '  SELECT produto_id, MAX(id) AS max_id '
+      '  FROM inventario_cicli GROUP BY produto_id'
+      ') m ON i.id = m.max_id',
+      [],
     );
     return rows.map(_mapToItemCiclo).toList();
   }
