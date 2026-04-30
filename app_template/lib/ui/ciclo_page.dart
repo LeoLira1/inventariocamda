@@ -417,6 +417,11 @@ class _ProdutoTile extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                if (cicloItem!.contadoEm.isNotEmpty)
+                  Text(
+                    _fmtDate(cicloItem.contadoEm),
+                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  ),
               ],
             )
           : Text(
@@ -429,6 +434,14 @@ class _ProdutoTile extends StatelessWidget {
 
   String _fmt(double v) =>
       v == v.truncateToDouble() ? v.toInt().toString() : v.toStringAsFixed(2);
+
+  String _fmtDate(String iso) {
+    try {
+      return DateFormat('dd/MM/yyyy').format(DateTime.parse(iso));
+    } catch (_) {
+      return '';
+    }
+  }
 
   Future<void> _openContagem(
     BuildContext context,
