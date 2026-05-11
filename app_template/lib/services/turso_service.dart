@@ -199,11 +199,12 @@ class TursoService {
     await _execute(
       'UPDATE estoque_mestre SET '
       'status_ciclo = ?, qtd_contada_ciclo = ?, '
-      'qtd_sistema_na_contagem = qtd_sistema, contado_ciclo_em = ? '
+      'qtd_sistema_na_contagem = ?, contado_ciclo_em = ? '
       'WHERE codigo = ?',
       [
         _text(statusCiclo),
         _int(qtdContada.round()),
+        _int(qtdSistema.round()),
         _text(contadoEm),
         _text(produtoId),
       ],
